@@ -230,7 +230,7 @@
             padding: 0 1px;
             transition: all 0.1s;
             border-radius: 2px;
-            display: inline-block;
+            display: inline;
         }
         .word-group:hover {
             background-color: #f0f8ff;
@@ -498,7 +498,7 @@
 
         // === FUNCIONES PARA PROCESAR MARCADORES DE TEXTO ===
         function procesarMarcadoresTexto(texto) {
-            // Paso 1: Detectar y proteger marcadores *^...^* y ^...^
+            // Paso 1: Identificar todos los marcadores *^...^* y ^...^ en la oración
             let oracionProtegida = texto;
             const boldParts = [];
             const plainParts = [];
@@ -784,7 +784,7 @@
             span.style.borderBottom = '1px dotted #7a7a7a';
             span.style.padding = '0 1px';
             span.style.borderRadius = '2px';
-            span.style.display = 'inline-block';
+            span.style.display = 'inline';
             span.addEventListener('click', function(e) {
                 if (parentGroup) {
                     handleWordClick(parentGroup, e);
