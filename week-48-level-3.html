@@ -488,7 +488,7 @@
         const HISTORIAS_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1zsJMXQ0kWsuWgvtbmrdu1L3h6iGU7zZRubNcsbzFwuk/export?format=csv&gid=0';
         const HISTORIAS_SHEETS_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1zsJMXQ0kWsuWgvtbmrdu1L3h6iGU7zZRubNcsbzFwuk/edit?gid=0';
 
-        // === 🔑 FILTRO POR SEMANA ===
+        // === FILTRO POR SEMANA ===
         const SEMANA_FILTRO = "48.03.";
 
         // === VARIABLES GLOBALES ===
@@ -496,7 +496,7 @@
         let currentMode = 'word';
         let currentStories = [];
 
-        // === FUNCIONES PARA PROCESAR MARCADORES DE TEXTO ===
+        // === NUEVA FUNCIÓN DE PROCESAMIENTO ===
         function procesarMarcadoresTexto(texto) {
             let tempText = texto;
             const boldParts = [];
@@ -516,7 +516,7 @@
             const boldGroup = boldParts.map(p => p.split('_')[0]).join(' ');
             const plainGroup = plainParts.map(p => p.split('_')[0]).join(' ');
 
-            // Reemplazar con texto visual (stays) y grupo semántico (stay up)
+            // Reemplazar con texto visual + grupo semántico
             tempText = tempText.replace(/\{\{BOLD_(\d+)\}\}/g, (match, index) => {
                 const full = boldParts[index];
                 const [raiz, sufijo = ''] = full.split('_', 2);
@@ -538,7 +538,7 @@
             return tempText;
         }
 
-        // === FUNCIONES PARA CARGAR DESDE GOOGLE SHEETS ===
+        // === RESTO DEL CÓDIGO SIN CAMBIOS ===
         async function cargarHistoriasDesdeSheets() {
             try {
                 showNotification('📥 Cargando historia desde Google Sheets...');
@@ -671,8 +671,6 @@
         function openGoogleSheets() {
             window.open(HISTORIAS_SHEETS_EDIT_URL, '_blank');
         }
-
-        // === FUNCIONES PARA GOOGLE SHEETS (VOCABULARIO) ===
         async function cargarDesdeGoogleSheets() {
             try {
                 const respuesta = await fetch(GOOGLE_SHEETS_URL);
@@ -756,8 +754,6 @@
             }
             return generateSpanishPronunciation(cleanWord);
         }
-
-        // === MODO OSCURO ===
         function toggleDarkMode() {
             const container = document.getElementById('appContainer');
             const isDark = container.getAttribute('data-theme') === 'dark';
@@ -769,8 +765,6 @@
                 localStorage.setItem('theme', 'dark');
             }
         }
-
-        // === FUNCIONES DE PROCESAMIENTO DE TEXTO ===
         function createClickableSpan(word, parentGroup = null) {
             const span = document.createElement('span');
             span.textContent = word;
@@ -883,8 +877,6 @@
                 else processTextForSentenceMode();
             }
         }
-
-        // === FUNCIONES DE DICCIONARIO Y POPUPS ===
         function handleWordClick(word, event) {
             speakWord(word);
             showWordPopup(word, event);
@@ -938,8 +930,6 @@
             notification.style.display = 'block';
             setTimeout(() => { notification.style.display = 'none'; }, 3000);
         }
-
-        // === INICIALIZACIÓN ===
         async function initApp() {
             await cargarDesdeGoogleSheets();
             await cargarHistoriasDesdeSheets();
@@ -948,7 +938,6 @@
                 document.getElementById('appContainer').setAttribute('data-theme', 'dark');
             }
         }
-
         document.getElementById('popupOverlay').addEventListener('click', closePopup);
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
