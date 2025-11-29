@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEVEL 3. WEEK 49 - Weeks Readings</title>
+    <title>LEVEL 3. WEEK 48 - Weeks Readings</title>
     <style>
         :root {
             --bg-color: #006400;
@@ -230,7 +230,7 @@
             padding: 0 1px;
             transition: all 0.1s;
             border-radius: 2px;
-            display: inline-block;
+            display: inline;
         }
         .word-group:hover {
             background-color: #f0f8ff;
@@ -438,7 +438,7 @@
 <body>
     <div class="container" id="appContainer">
         <div class="header">
-            <div class="app-title">LEVEL 3. WEEK 49</div>
+            <div class="app-title">LEVEL 3. WEEK 48</div>
             <div class="mode-selector">
                 <button id="wordModeBtn" class="active" onclick="setMode('word')">Word Mode</button>
                 <button id="sentenceModeBtn" onclick="setMode('sentence')">Sentence Mode</button>
@@ -489,7 +489,7 @@
         const HISTORIAS_SHEETS_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1zsJMXQ0kWsuWgvtbmrdu1L3h6iGU7zZRubNcsbzFwuk/edit?gid=0';
 
         // === 🔑 FILTRO POR SEMANA ===
-        const SEMANA_FILTRO = "49.03.";
+        const SEMANA_FILTRO = "48.03.";
 
         // === VARIABLES GLOBALES ===
         let wordDatabase = {};
@@ -498,7 +498,7 @@
 
         // === FUNCIONES PARA PROCESAR MARCADORES DE TEXTO ===
         function procesarMarcadoresTexto(texto) {
-            // Paso 1: Detectar y proteger marcadores *^...^* y ^...^
+            // Paso 1: Identificar todos los marcadores *^...^* y ^...^ en la oración
             let oracionProtegida = texto;
             const boldParts = [];
             const plainParts = [];
@@ -784,7 +784,7 @@
             span.style.borderBottom = '1px dotted #7a7a7a';
             span.style.padding = '0 1px';
             span.style.borderRadius = '2px';
-            span.style.display = 'inline-block';
+            span.style.display = 'inline';
             span.addEventListener('click', function(e) {
                 if (parentGroup) {
                     handleWordClick(parentGroup, e);
