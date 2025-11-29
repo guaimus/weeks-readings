@@ -3,29 +3,493 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEVEL 3. WEEK 48 - Weeks Readings</title>
-    <!-- Todo tu CSS sigue igual (se omite por brevedad) -->
-    <style>... (igual que antes) ...</style>
+    <title>LEVEL 3. WEEK 49 - Weeks Readings</title>
+    <style>
+        :root {
+            --bg-color: #006400;
+            --text-color: #333;
+            --card-bg: white;
+            --header-bg: linear-gradient(135deg, #228B22 0%, #006400 100%);
+            --header-text: white;
+            --dashboard-bg: #f8f9fa;
+            --story-card-bg: #f8f9fb;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+            --clause-hover: #006400;
+            --popup-bg: white;
+            --overlay-bg: rgba(0, 0, 0, 0.5);
+            --btn-bg: #006400;
+            --btn-hover: #004d00;
+            --bold-word-color: #006400;
+            --link-color: #006400;
+            --link-hover: #004d00;
+            --scrollbar-thumb: #006400;
+        }
+        [data-theme="dark"] {
+            --bg-color: #001a00;
+            --text-color: #e0e0e0;
+            --card-bg: #121212;
+            --header-bg: linear-gradient(135deg, #003300 0%, #001a00 100%);
+            --header-text: #f0f0f0;
+            --dashboard-bg: #1e1e1e;
+            --story-card-bg: #1a1a1a;
+            --border-color: #444;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            --clause-hover: #66ff99;
+            --popup-bg: #222;
+            --overlay-bg: rgba(0, 0, 0, 0.8);
+            --btn-bg: #00cc44;
+            --btn-hover: #00aa33;
+            --bold-word-color: #66ff99;
+            --link-color: #66ff99;
+            --link-hover: #44dd77;
+            --scrollbar-thumb: #66ff99;
+        }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        }
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            line-height: 1.3; 
+            padding: 10px; 
+            min-height: 100vh; 
+        }
+        .container { 
+            max-width: 100%; 
+            width: 100%; 
+            margin: 0 auto; 
+            background: var(--card-bg); 
+            border-radius: 10px; 
+            box-shadow: var(--shadow); 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .header { 
+            background: var(--header-bg); 
+            padding: 10px 14px; 
+            color: var(--header-text); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+        }
+        .app-title { 
+            font-size: 18px; 
+            font-weight: bold; 
+            margin-right: 10px; 
+        }
+        .mode-selector { 
+            display: flex; 
+            gap: 5px; 
+        }
+        .mode-selector button { 
+            background: rgba(255, 255, 255, 0.2); 
+            color: var(--header-text); 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            border-radius: 12px; 
+            padding: 5px 10px; 
+            cursor: pointer; 
+            font-size: 11px; 
+            transition: all 0.2s ease; 
+        }
+        .mode-selector button:hover { 
+            background: rgba(255, 255, 255, 0.3); 
+        }
+        .mode-selector button.active { 
+            background: white; 
+            color: #006400; 
+        }
+        [data-theme="dark"] .mode-selector button.active { 
+            background: #003300; 
+            color: #f0f0f0; 
+        }
+        .dark-mode-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--header-text);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+        .dark-mode-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .dashboard { 
+            padding: 10px; 
+            background: var(--dashboard-bg); 
+            border-bottom: 1px solid var(--border-color); 
+            position: sticky; 
+            top: 0; 
+            z-index: 10; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .content { 
+            padding: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            overflow-y: auto; 
+            max-height: calc(100vh - 180px);
+        }
+        .story-card { 
+            background: var(--story-card-bg); 
+            border-radius: 6px; 
+            padding: 12px; 
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07); 
+            border: 1px solid var(--border-color); 
+        }
+        [data-theme="dark"] .story-card { 
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+            border-color: #333;
+        }
+        .story-title { 
+            font-size: 15px; 
+            color: var(--bold-word-color); 
+            margin-bottom: 6px; 
+            padding-bottom: 5px; 
+            border-bottom: 1px solid var(--bold-word-color); 
+            text-align: center; 
+            font-weight: bold; 
+        }
+        .audio-player { 
+            width: 100%; 
+            margin: 6px 0; 
+            border-radius: 5px; 
+        }
+        .audio-player::-webkit-media-controls-enclosure { 
+            border-radius: 5px; 
+            background: #f1f3f4; 
+        }
+        [data-theme="dark"] .audio-player::-webkit-media-controls-enclosure { 
+            background: #333;
+        }
+        .story-content { 
+            font-size: 13px; 
+            line-height: 1.3; 
+            color: var(--text-color); 
+            padding: 6px; 
+            background: var(--card-bg); 
+            border-radius: 5px; 
+            border: 1px solid var(--border-color); 
+        }
+        .story-content p { 
+            margin-bottom: 6px; 
+        }
+        .clause { 
+            display: block; 
+            margin-bottom: 3px; 
+            padding-left: 6px; 
+            border-left: 1px solid transparent; 
+            transition: border-left-color 0.15s; 
+            line-height: 1.3; 
+        }
+        .clause:hover { 
+            border-left-color: var(--clause-hover); 
+        }
+        .footer { 
+            text-align: center; 
+            padding: 8px; 
+            background: var(--dashboard-bg); 
+            color: #7f7f7f; 
+            font-size: 11px; 
+            border-top: 1px solid var(--border-color); 
+        }
+        [data-theme="dark"] .footer {
+            color: #aaa;
+        }
+        .word-mode span { 
+            cursor: pointer; 
+            border-bottom: 1px dotted #7a7a7a; 
+            padding: 0 1px; 
+            transition: all 0.1s; 
+            border-radius: 2px; 
+            display: inline-block; 
+        }
+        [data-theme="dark"] .word-mode span {
+            border-bottom-color: #666;
+        }
+        .word-mode span:hover { 
+            background-color: #f0f8ff; 
+        }
+        [data-theme="dark"] .word-mode span:hover { 
+            background-color: #333;
+        }
+        .word-group {
+            cursor: pointer;
+            border-bottom: 1px dotted #7a7a7a;
+            padding: 0 1px;
+            transition: all 0.1s;
+            border-radius: 2px;
+            display: inline-block;
+        }
+        .word-group:hover {
+            background-color: #f0f8ff;
+        }
+        [data-theme="dark"] .word-group:hover {
+            background-color: #333;
+        }
+        .bold-word {
+            font-weight: bold;
+            color: var(--bold-word-color);
+        }
+        .word-popup {
+            position: fixed;
+            background: var(--popup-bg);
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            z-index: 1001;
+            min-width: 250px;
+            max-width: 90vw;
+            display: none;
+            border: 2px solid var(--bold-word-color);
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .popup-title {
+            font-weight: bold;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+        .close-popup {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #7f7f7f;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        [data-theme="dark"] .close-popup {
+            color: #bbb;
+        }
+        .close-popup:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+        [data-theme="dark"] .close-popup:hover {
+            background: #444;
+            color: #eee;
+        }
+        .popup-content {
+            margin-bottom: 10px;
+        }
+        .popup-word {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--bold-word-color);
+            margin-bottom: 5px;
+        }
+        .popup-meaning {
+            font-size: 16px;
+            color: #e74c3c;
+            margin-bottom: 5px;
+        }
+        [data-theme="dark"] .popup-meaning {
+            color: #ff6b6b;
+        }
+        .popup-pronunciation {
+            font-size: 14px;
+            color: #27ae60;
+            font-style: italic;
+            font-family: 'Arial', 'Helvetica', sans-serif;
+        }
+        [data-theme="dark"] .popup-pronunciation {
+            color: #66bb6a;
+        }
+        .popup-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .popup-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+        .popup-close-btn {
+            background: var(--btn-bg);
+            color: white;
+        }
+        .popup-close-btn:hover {
+            background: var(--btn-hover);
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay-bg);
+            z-index: 1000;
+            display: none;
+        }
+        .instructions { 
+            text-align: center; 
+            margin-bottom: 6px; 
+            color: #666; 
+            font-size: 13px; 
+            line-height: 1.2; 
+        }
+        [data-theme="dark"] .instructions {
+            color: #bbb;
+        }
+        .admin-section {
+            margin-top: 12px;
+            padding: 8px;
+            background: var(--dashboard-bg);
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+        }
+        .admin-btn {
+            background: var(--btn-bg);
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-right: 6px;
+            transition: background 0.2s;
+        }
+        .admin-btn:hover {
+            background: var(--btn-hover);
+        }
+        .refresh-stories-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-right: 6px;
+            transition: background 0.2s;
+        }
+        .refresh-stories-btn:hover {
+            background: #2980b9;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f4;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .notification {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: #2ecc71;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 3px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            z-index: 1000;
+            display: none;
+        }
+        .error-message {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="container" id="appContainer">
         <div class="header">
-            <div class="app-title">LEVEL 3. WEEK 48</div>
-            <!-- resto del header igual -->
+            <div class="app-title">LEVEL 3. WEEK 49</div>
+            <div class="mode-selector">
+                <button id="wordModeBtn" class="active" onclick="setMode('word')">Word Mode</button>
+                <button id="sentenceModeBtn" onclick="setMode('sentence')">Sentence Mode</button>
+                <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙 Modo Oscuro</button>
+            </div>
         </div>
-        <!-- resto del HTML igual -->
+        <div class="dashboard">
+            <div class="instructions">Haz clic en cualquier palabra para escuchar la pronunciación y ver la traducción</div>
+            <div class="admin-section">
+                <div style="font-weight: bold; margin-bottom: 5px; color: var(--bold-word-color);">Administración</div>
+                <button class="refresh-stories-btn" id="refreshStoriesBtn" onclick="refreshStoriesFromSheets()">
+                    <span class="loading-spinner" style="display:none;"></span>
+                    Actualizar desde Google Sheets
+                </button>
+                <button class="admin-btn" onclick="openGoogleSheets()">Abrir Google Sheets</button>
+            </div>
+        </div>
+        <div class="content">
+            <div id="storiesContainer">
+                <!-- La historia se cargará aquí desde Google Sheets -->
+            </div>
+        </div>
+        <div class="footer">
+            <p>Haz clic en cualquier palabra para escuchar la pronunciación y ver la traducción.</p>
+        </div>
     </div>
-
-    <!-- POP-UP y NOTIFICACIONES (igual) -->
-
+    <!-- POP-UP PARA MOSTRAR SIGNIFICADO -->
+    <div class="overlay" id="popupOverlay"></div>
+    <div class="word-popup" id="wordPopup">
+        <div class="popup-header">
+            <div class="popup-title">Significado de la palabra</div>
+            <button class="close-popup" onclick="closePopup()">&times;</button>
+        </div>
+        <div class="popup-content">
+            <div class="popup-word" id="popupWord"></div>
+            <div class="popup-meaning" id="popupMeaning"></div>
+            <div class="popup-pronunciation" id="popupPronunciation"></div>
+        </div>
+        <div class="popup-footer">
+            <button class="popup-btn popup-close-btn" onclick="closePopup()">Cerrar</button>
+        </div>
+    </div>
+    <div class="notification" id="notification"></div>
     <script>
         // === CONFIGURACIÓN DE GOOGLE SHEETS ===
         const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1L_ljS7YU2Fq2Ib2ECAmg6wAhDRih2C6ct484lXZ3un4/export?format=csv';
         const HISTORIAS_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1zsJMXQ0kWsuWgvtbmrdu1L3h6iGU7zZRubNcsbzFwuk/export?format=csv&gid=0';
         const HISTORIAS_SHEETS_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1zsJMXQ0kWsuWgvtbmrdu1L3h6iGU7zZRubNcsbzFwuk/edit?gid=0';
 
-        // === 🔑 FILTRO POR SEMANA - CONFIGURABLE ===
-        const SEMANA_FILTRO = "48.03."; // ← EDITA ESTO para otras semanas
+        // === 🔑 FILTRO POR SEMANA ===
+        const SEMANA_FILTRO = "49.03.";
 
         // === VARIABLES GLOBALES ===
         let wordDatabase = {};
@@ -33,7 +497,54 @@
         let currentStories = [];
 
         // === FUNCIONES PARA PROCESAR MARCADORES DE TEXTO ===
-        // ... (todo igual: procesarMarcadoresTexto, obtenerGrupoCompletoConSufijos, unificarMarcadoresSeparados) ...
+        function procesarMarcadoresTexto(texto) {
+            texto = texto.replace(/\*\^([^_]+)_([^^]+)\^\*/g, function(match, raiz, sufijo) {
+                const grupoCompleto = obtenerGrupoCompletoConSufijos(texto);
+                return `<span class="bold-word word-group" data-group="${grupoCompleto}">${raiz}</span>${sufijo}`;
+            });
+            texto = unificarMarcadoresSeparados(texto, '*^', '^*', 'bold-word word-group');
+            texto = texto.replace(/\*\~([^~]+)\~\*/g, function(match, contenido) {
+                return `<span class="bold-word word-group" data-group="${contenido}">${contenido}</span>`;
+            });
+            texto = unificarMarcadoresSeparados(texto, '^', '^', 'word-group');
+            texto = texto.replace(/\~([^~]+)\~/g, function(match, contenido) {
+                return `<span class="word-group" data-group="${contenido}">${contenido}</span>`;
+            });
+            texto = texto.replace(/\*([^*]+)\*/g, function(match, contenido) {
+                return `<span class="bold-word">${contenido}</span>`;
+            });
+            return texto;
+        }
+        function obtenerGrupoCompletoConSufijos(texto) {
+            const grupos = [];
+            const regex = /\*\^([^_]+)(?:_[^^]*)?\^\*/g;
+            let match;
+            while ((match = regex.exec(texto)) !== null) {
+                const raiz = match[1].trim();
+                grupos.push(raiz);
+            }
+            return grupos.join(' ');
+        }
+        function unificarMarcadoresSeparados(texto, marcadorInicio, marcadorFin, claseCSS) {
+            const regex = new RegExp(`\\${marcadorInicio}([^${marcadorFin.substring(0,1)}]+)\\${marcadorFin}`, 'g');
+            const grupos = [];
+            let match;
+            while ((match = regex.exec(texto)) !== null) {
+                if (!match[1].includes('_')) {
+                    grupos.push(match[1].trim());
+                }
+            }
+            if (grupos.length > 0) {
+                const grupoCompleto = grupos.join(' ');
+                texto = texto.replace(regex, function(match, contenido) {
+                    if (contenido.includes('_')) {
+                        return match;
+                    }
+                    return `<span class="${claseCSS}" data-group="${grupoCompleto}">${contenido}</span>`;
+                });
+            }
+            return texto;
+        }
 
         // === FUNCIONES PARA CARGAR DESDE GOOGLE SHEETS ===
         async function cargarHistoriasDesdeSheets() {
@@ -44,7 +555,7 @@
                 const csvData = await respuesta.text();
                 const historias = procesarCSVHistorias(csvData);
                 if (historias.length > 0) {
-                    currentStories = [historias[0]]; // Solo la primera historia que coincida
+                    currentStories = [historias[0]];
                     mostrarHistorias(currentStories);
                     showNotification(`✅ Historia cargada: ${historias[0].titulo}`);
                 } else {
@@ -57,7 +568,6 @@
                 throw error;
             }
         }
-
         function procesarCSVHistorias(csv) {
             const historias = [];
             const lineas = csv.split('\n');
@@ -80,9 +590,8 @@
                 columnas.push(current);
                 if (columnas.length >= 6) {
                     const id = columnas[0].trim().replace(/"/g, '');
-                    // 🔍 FILTRO: solo incluir si el ID comienza con SEMANA_FILTRO
                     if (!id.startsWith(SEMANA_FILTRO)) {
-                        continue; // Saltar esta historia
+                        continue;
                     }
                     const historia = {
                         id: id,
@@ -99,9 +608,344 @@
             }
             return historias;
         }
+        function procesarContenidoHistoria(contenido) {
+            if (contenido.includes('class="clause"')) {
+                return contenido;
+            }
+            const oraciones = contenido.split(/[.!?]/).filter(oracion => oracion.trim().length > 0);
+            let htmlContent = '';
+            oraciones.forEach(oracion => {
+                const oracionLimpia = oracion.trim();
+                if (oracionLimpia) {
+                    let oracionProcesada = procesarMarcadoresTexto(oracionLimpia);
+                    htmlContent += `<span class="clause">${oracionProcesada}.</span>\n`;
+                }
+            });
+            return `<p>${htmlContent}</p>`;
+        }
+        function mostrarError(mensaje) {
+            const container = document.getElementById('storiesContainer');
+            container.innerHTML = `<div class="error-message">${mensaje}</div>`;
+        }
+        function mostrarHistorias(historias) {
+            const container = document.getElementById('storiesContainer');
+            container.innerHTML = '';
+            if (historias.length === 0) {
+                mostrarError('No se encontraron historias en Google Sheets');
+                return;
+            }
+            historias.forEach(historia => {
+                const storyCard = crearStoryCard(historia);
+                container.appendChild(storyCard);
+            });
+            if (currentMode === 'word') {
+                processTextForWordMode();
+            } else {
+                processTextForSentenceMode();
+            }
+        }
+        function crearStoryCard(historia) {
+            const storyCard = document.createElement('div');
+            storyCard.className = 'story-card';
+            storyCard.innerHTML = `
+                <div class="story-title">${historia.id}. ${historia.titulo}</div>
+                ${historia.audioURL ? `
+                <audio class="audio-player" controls controlsList="nodownload">
+                    <source src="${historia.audioURL}" type="audio/mpeg">
+                </audio>
+                ` : ''}
+                <div class="story-content">
+                    ${historia.contenido}
+                </div>
+            `;
+            return storyCard;
+        }
+        async function refreshStoriesFromSheets() {
+            const btn = document.getElementById('refreshStoriesBtn');
+            const spinner = btn.querySelector('.loading-spinner');
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            btn.innerHTML = '<span class="loading-spinner"></span>Actualizando...';
+            try {
+                await cargarHistoriasDesdeSheets();
+            } catch (error) {
+                // El error ya se muestra en mostrarError()
+            } finally {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                btn.innerHTML = 'Actualizar desde Google Sheets';
+            }
+        }
+        function openGoogleSheets() {
+            window.open(HISTORIAS_SHEETS_EDIT_URL, '_blank');
+        }
 
-        // === RESTO DE FUNCIONES SIN CAMBIOS ===
-        // ... (procesarContenidoHistoria, mostrarHistorias, crearStoryCard, etc.) ...
+        // === FUNCIONES PARA GOOGLE SHEETS (VOCABULARIO) ===
+        async function cargarDesdeGoogleSheets() {
+            try {
+                const respuesta = await fetch(GOOGLE_SHEETS_URL);
+                if (!respuesta.ok) throw new Error('Error al cargar el Sheet de vocabulario');
+                const csvData = await respuesta.text();
+                wordDatabase = procesarCSV(csvData);
+                showNotification('✅ Diccionario cargado desde Google Sheets');
+            } catch (error) {
+                console.error('❌ Error cargando vocabulario desde Google Sheets:', error);
+                showNotification('⚠️ Usando diccionario local');
+                initializeLocalDatabase();
+            }
+        }
+        function procesarCSV(csv) {
+            const database = {};
+            const lineas = csv.split('\n');
+            for (let i = 1; i < lineas.length; i++) {
+                const linea = lineas[i].trim();
+                if (!linea) continue;
+                const columnas = linea.split(',');
+                if (columnas.length >= 3) {
+                    const palabra = columnas[0].trim().toLowerCase().replace(/"/g, '');
+                    const meaning = columnas[1].trim().replace(/"/g, '');
+                    const pronunciation = columnas[2].trim().replace(/"/g, '');
+                    if (palabra && meaning) {
+                        database[palabra] = { 
+                            meaning, 
+                            pronunciation: pronunciation || generateSpanishPronunciation(palabra)
+                        };
+                    }
+                }
+            }
+            return database;
+        }
+        function initializeLocalDatabase() {
+            const translations = {
+                "love": "amar", "games": "juegos", "love games": "amar juegos",
+                "wakes up": "despierta", "hardly": "apenas", "ever": "nunca",
+                "stops playing": "deja de jugar", "take care of": "cuidar de",
+                "stop playing": "dejar de jugar", "stay up": "quedarse despierto",
+                "stay": "quedarse", "up": "arriba", "all night": "toda la noche",
+                "video games": "videojuegos", "as soon as": "tan pronto como",
+                "wakes up": "despierta", "starts playing": "empieza a jugar",
+                "turns off": "apaga", "eats": "come", "sleeps": "duerme",
+                "get": "obtener", "fat": "gordo", "get fat": "engordar",
+                "getting": "obteniendo", "very": "muy"
+            };
+            for (const [word, meaning] of Object.entries(translations)) {
+                wordDatabase[word] = {
+                    meaning: meaning,
+                    pronunciation: generateSpanishPronunciation(word)
+                };
+            }
+        }
+        function generateSpanishPronunciation(word) {
+            const pronunciations = {
+                "love": "lov", "games": "gueims", "love games": "lov gueims",
+                "wakes up": "uieks ap", "hardly": "jardli", "ever": "ever",
+                "stops playing": "stops pleiin", "take care of": "teik ker of",
+                "stop playing": "stop pleiin", "stay up": "stei ap",
+                "stay": "stei", "up": "ap", "all night": "ol nait",
+                "video games": "vidio gueims", "as soon as": "as sun as",
+                "wakes up": "uieks ap", "starts playing": "starts pleiin",
+                "turns off": "turns of", "eats": "its", "sleeps": "slips",
+                "get": "guet", "fat": "fat", "get fat": "guet fat",
+                "getting": "gueting", "very": "veri"
+            };
+            return pronunciations[word] || word;
+        }
+        function getTranslation(word) {
+            const cleanWord = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
+            if (wordDatabase[cleanWord]) {
+                return wordDatabase[cleanWord].meaning;
+            }
+            return `Traducción no encontrada para: ${cleanWord}`;
+        }
+        function getPronunciation(word) {
+            const cleanWord = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
+            if (wordDatabase[cleanWord]) {
+                return wordDatabase[cleanWord].pronunciation;
+            }
+            return generateSpanishPronunciation(cleanWord);
+        }
+
+        // === MODO OSCURO ===
+        function toggleDarkMode() {
+            const container = document.getElementById('appContainer');
+            const isDark = container.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                container.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                container.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // === FUNCIONES DE PROCESAMIENTO DE TEXTO ===
+        function createClickableSpan(word, parentGroup = null) {
+            const span = document.createElement('span');
+            span.textContent = word;
+            span.style.cursor = 'pointer';
+            span.style.borderBottom = '1px dotted #7a7a7a';
+            span.style.padding = '0 1px';
+            span.style.borderRadius = '2px';
+            span.style.display = 'inline-block';
+            span.addEventListener('click', function(e) {
+                if (parentGroup) {
+                    handleWordClick(parentGroup, e);
+                } else {
+                    handleWordClick(word, e);
+                }
+            });
+            span.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f0f8ff';
+            });
+            span.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = 'transparent';
+            });
+            return span;
+        }
+        function processTextForWordMode() {
+            const storyContent = document.querySelector('.story-content');
+            if (!storyContent) return;
+            const clauses = storyContent.querySelectorAll('.clause');
+            clauses.forEach(clause => {
+                const originalHTML = clause.innerHTML;
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = originalHTML;
+                clause.innerHTML = '';
+                processNode(tempDiv, clause);
+            });
+        }
+        function processNode(sourceNode, targetNode) {
+            Array.from(sourceNode.childNodes).forEach(node => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const words = node.textContent.split(/(\s+)/);
+                    words.forEach(word => {
+                        if (word.trim() === '') {
+                            targetNode.appendChild(document.createTextNode(word));
+                        } else {
+                            const span = createClickableSpan(word);
+                            targetNode.appendChild(span);
+                        }
+                    });
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    if (node.classList.contains('word-group')) {
+                        const groupText = node.getAttribute('data-group');
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = node.innerHTML;
+                        const groupContainer = document.createElement('span');
+                        groupContainer.className = 'word-group';
+                        groupContainer.style.display = 'inline';
+                        Array.from(tempDiv.childNodes).forEach(childNode => {
+                            if (childNode.nodeType === Node.TEXT_NODE) {
+                                const words = childNode.textContent.split(/(\s+)/);
+                                words.forEach(word => {
+                                    if (word.trim() === '') {
+                                        groupContainer.appendChild(document.createTextNode(word));
+                                    } else {
+                                        const span = createClickableSpan(word, groupText);
+                                        groupContainer.appendChild(span);
+                                    }
+                                });
+                            } else {
+                                groupContainer.appendChild(childNode.cloneNode(true));
+                            }
+                        });
+                        targetNode.appendChild(groupContainer);
+                    } else if (node.classList.contains('bold-word')) {
+                        if (!node.classList.contains('word-group')) {
+                            const wordText = node.textContent || node.getAttribute('data-words');
+                            const span = createClickableSpan(wordText);
+                            span.className = 'bold-word';
+                            span.style.fontWeight = 'bold';
+                            span.style.color = 'var(--bold-word-color)';
+                            targetNode.appendChild(span);
+                        } else {
+                            targetNode.appendChild(node.cloneNode(true));
+                        }
+                    } else {
+                        targetNode.appendChild(node.cloneNode(true));
+                    }
+                }
+            });
+        }
+        function processTextForSentenceMode() {
+            const storyContent = document.querySelector('.story-content');
+            if (!storyContent) return;
+            const clauses = storyContent.querySelectorAll('.clause');
+            clauses.forEach(clause => {
+                const span = document.createElement('span');
+                span.className = 'sentence';
+                span.innerHTML = clause.innerHTML;
+                span.addEventListener('click', function(e) {
+                    speakSentence(span.textContent);
+                });
+                clause.innerHTML = '';
+                clause.appendChild(span);
+            });
+        }
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('wordModeBtn').classList.toggle('active', mode === 'word');
+            document.getElementById('sentenceModeBtn').classList.toggle('active', mode === 'sentence');
+            if (currentStories.length > 0) {
+                if (mode === 'word') processTextForWordMode(); 
+                else processTextForSentenceMode();
+            }
+        }
+
+        // === FUNCIONES DE DICCIONARIO Y POPUPS ===
+        function handleWordClick(word, event) {
+            speakWord(word);
+            showWordPopup(word, event);
+        }
+        function speakWord(word) {
+            const cleanWord = word.replace(/[.,!?;:'"]/g, '');
+            const utterance = new SpeechSynthesisUtterance(cleanWord);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.8;
+            speechSynthesis.speak(utterance);
+        }
+        function speakSentence(sentence) {
+            const utterance = new SpeechSynthesisUtterance(sentence);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.8;
+            speechSynthesis.speak(utterance);
+        }
+        function showWordPopup(word, event) {
+            const cleanWord = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
+            document.getElementById('popupWord').textContent = cleanWord;
+            document.getElementById('popupMeaning').textContent = getTranslation(cleanWord);
+            document.getElementById('popupPronunciation').textContent = `Pronunciación: ${getPronunciation(cleanWord)}`;
+            positionPopup(event);
+            document.getElementById('wordPopup').style.display = 'block';
+            document.getElementById('popupOverlay').style.display = 'block';
+        }
+        function positionPopup(event) {
+            const popup = document.getElementById('wordPopup');
+            const clickX = event.clientX;
+            const clickY = event.clientY;
+            const popupWidth = popup.offsetWidth;
+            const popupHeight = popup.offsetHeight;
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            let popupX = clickX - (popupWidth / 2);
+            let popupY = clickY - (popupHeight / 2);
+            if (popupX < 10) popupX = 10;
+            if (popupX + popupWidth > windowWidth - 10) popupX = windowWidth - popupWidth - 10;
+            if (popupY < 10) popupY = 10;
+            if (popupY + popupHeight > windowHeight - 10) popupY = windowHeight - popupHeight - 10;
+            popup.style.left = popupX + 'px';
+            popup.style.top = popupY + 'px';
+        }
+        function closePopup() {
+            document.getElementById('wordPopup').style.display = 'none';
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => { notification.style.display = 'none'; }, 3000);
+        }
 
         // === INICIALIZACIÓN ===
         async function initApp() {
@@ -113,7 +957,15 @@
             }
         }
 
-        // ... (event listeners y resto del script) ...
+        document.getElementById('popupOverlay').addEventListener('click', closePopup);
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePopup();
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+        });
     </script>
 </body>
 </html>
