@@ -498,52 +498,50 @@
 
         // === FUNCIONES PARA PROCESAR MARCADORES DE TEXTO ===
         function procesarMarcadoresTexto(texto) {
-            texto = texto.replace(/\*\^([^_]+)_([^^]+)\^\*/g, function(match, raiz, sufijo) {
-                const grupoCompleto = obtenerGrupoCompletoConSufijos(texto);
-                return `<span class="bold-word word-group" data-group="${grupoCompleto}">${raiz}</span>${sufijo}`;
+            // Paso 1: Detectar y proteger marcadores *^...^* y ^...^
+            let oracionProtegida = texto;
+            const boldParts = [];
+            const plainParts = [];
+            
+            // Extraer *^...^* y reemplazar por marcadores temporales
+            oracionProtegida = oracionProtegida.replace(/\*\^([^*^]+)\^\*/g, (match, contenido) => {
+                boldParts.push(contenido);
+                return `{{BOLD_${boldParts.length - 1}}}`;
             });
-            texto = unificarMarcadoresSeparados(texto, '*^', '^*', 'bold-word word-group');
-            texto = texto.replace(/\*\~([^~]+)\~\*/g, function(match, contenido) {
-                return `<span class="bold-word word-group" data-group="${contenido}">${contenido}</span>`;
+            
+            // Extraer ^...^ y reemplazar por marcadores temporales
+            oracionProtegida = oracionProtegida.replace(/\^([^*^]+)\^/g, (match, contenido) => {
+                plainParts.push(contenido);
+                return `{{PLAIN_${plainParts.length - 1}}}`;
             });
-            texto = unificarMarcadoresSeparados(texto, '^', '^', 'word-group');
-            texto = texto.replace(/\~([^~]+)\~/g, function(match, contenido) {
-                return `<span class="word-group" data-group="${contenido}">${contenido}</span>`;
-            });
-            texto = texto.replace(/\*([^*]+)\*/g, function(match, contenido) {
-                return `<span class="bold-word">${contenido}</span>`;
-            });
-            return texto;
-        }
-        function obtenerGrupoCompletoConSufijos(texto) {
-            const grupos = [];
-            const regex = /\*\^([^_]+)(?:_[^^]*)?\^\*/g;
-            let match;
-            while ((match = regex.exec(texto)) !== null) {
-                const raiz = match[1].trim();
-                grupos.push(raiz);
-            }
-            return grupos.join(' ');
-        }
-        function unificarMarcadoresSeparados(texto, marcadorInicio, marcadorFin, claseCSS) {
-            const regex = new RegExp(`\\${marcadorInicio}([^${marcadorFin.substring(0,1)}]+)\\${marcadorFin}`, 'g');
-            const grupos = [];
-            let match;
-            while ((match = regex.exec(texto)) !== null) {
-                if (!match[1].includes('_')) {
-                    grupos.push(match[1].trim());
+
+            // Construir grupos completos
+            const boldGroup = boldParts.join(' ');
+            const plainGroup = plainParts.join(' ');
+
+            // Paso 2: Restaurar marcadores con el grupo correcto
+            // Procesar *^...^* -> puede tener sufijos como "_s"
+            oracionProtegida = oracionProtegida.replace(/\{\{BOLD_(\d+)\}\}/g, (match, index) => {
+                const contenido = boldParts[index];
+                if (contenido.includes('_')) {
+                    const [raiz, sufijo] = contenido.split('_', 2);
+                    return `<span class="bold-word word-group" data-group="${boldGroup}">${raiz}</span>${sufijo}`;
+                } else {
+                    return `<span class="bold-word word-group" data-group="${boldGroup}">${contenido}</span>`;
                 }
-            }
-            if (grupos.length > 0) {
-                const grupoCompleto = grupos.join(' ');
-                texto = texto.replace(regex, function(match, contenido) {
-                    if (contenido.includes('_')) {
-                        return match;
-                    }
-                    return `<span class="${claseCSS}" data-group="${grupoCompleto}">${contenido}</span>`;
-                });
-            }
-            return texto;
+            });
+
+            // Procesar ^...^
+            oracionProtegida = oracionProtegida.replace(/\{\{PLAIN_(\d+)\}\}/g, (match, index) => {
+                return `<span class="word-group" data-group="${plainGroup}">${plainParts[index]}</span>`;
+            });
+
+            // Paso 3: Procesar otros marcadores (en orden de prioridad)
+            oracionProtegida = oracionProtegida.replace(/\*\~([^~]+)\~\*/g, '<span class="bold-word word-group" data-group="$1">$1</span>');
+            oracionProtegida = oracionProtegida.replace(/\~([^~]+)\~/g, '<span class="word-group" data-group="$1">$1</span>');
+            oracionProtegida = oracionProtegida.replace(/\*([^*]+)\*/g, '<span class="bold-word">$1</span>');
+
+            return oracionProtegida;
         }
 
         // === FUNCIONES PARA CARGAR DESDE GOOGLE SHEETS ===
