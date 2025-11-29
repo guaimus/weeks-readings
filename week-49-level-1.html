@@ -3,47 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEVEL 1. WEEK 49 - Weeks Readings</title>
+    <title>Week 49 Level 1 - Weeks Readings</title>
     <style>
         :root {
-            --bg-color: #006400;
+            --bg-color: #f5f5f5;
             --text-color: #333;
             --card-bg: white;
-            --header-bg: linear-gradient(135deg, #228B22 0%, #006400 100%);
+            --header-bg: linear-gradient(135deg, #cccccc 0%, #999999 100%);
             --header-text: white;
             --dashboard-bg: #f8f9fa;
             --story-card-bg: #f8f9fb;
             --border-color: #e0e0e0;
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
-            --clause-hover: #006400;
+            --clause-hover: #666666;
             --popup-bg: white;
             --overlay-bg: rgba(0, 0, 0, 0.5);
-            --btn-bg: #006400;
-            --btn-hover: #004d00;
-            --bold-word-color: #006400;
-            --link-color: #006400;
-            --link-hover: #004d00;
-            --scrollbar-thumb: #006400;
+            --btn-bg: #666666;
+            --btn-hover: #444444;
+            --bold-word-color: #444444;
+            --link-color: #666666;
+            --link-hover: #444444;
+            --scrollbar-thumb: #999999;
         }
         [data-theme="dark"] {
-            --bg-color: #001a00;
+            --bg-color: #1a1a1a;
             --text-color: #e0e0e0;
-            --card-bg: #121212;
-            --header-bg: linear-gradient(135deg, #003300 0%, #001a00 100%);
+            --card-bg: #1f1f1f;
+            --header-bg: linear-gradient(135deg, #444444 0%, #222222 100%);
             --header-text: #f0f0f0;
-            --dashboard-bg: #1e1e1e;
-            --story-card-bg: #1a1a1a;
+            --dashboard-bg: #2a2a2a;
+            --story-card-bg: #252525;
             --border-color: #444;
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-            --clause-hover: #66ff99;
-            --popup-bg: #222;
+            --clause-hover: #aaaaaa;
+            --popup-bg: #2c2c2c;
             --overlay-bg: rgba(0, 0, 0, 0.8);
-            --btn-bg: #00cc44;
-            --btn-hover: #00aa33;
-            --bold-word-color: #66ff99;
-            --link-color: #66ff99;
-            --link-hover: #44dd77;
-            --scrollbar-thumb: #66ff99;
+            --btn-bg: #aaaaaa;
+            --btn-hover: #cccccc;
+            --bold-word-color: #cccccc;
+            --link-color: #aaaaaa;
+            --link-hover: #dddddd;
+            --scrollbar-thumb: #aaaaaa;
         }
         * { 
             margin: 0; 
@@ -90,7 +90,7 @@
         .mode-selector button { 
             background: rgba(255, 255, 255, 0.2); 
             color: var(--header-text); 
-            border: 1px solid rgba(255, 255, 255, 0.3); 
+            border: 1px solid rgba(255, 255, 0.3); 
             border-radius: 12px; 
             padding: 5px 10px; 
             cursor: pointer; 
@@ -98,20 +98,20 @@
             transition: all 0.2s ease; 
         }
         .mode-selector button:hover { 
-            background: rgba(255, 255, 255, 0.3); 
+            background: rgba(255, 255, 0.3); 
         }
         .mode-selector button.active { 
             background: white; 
-            color: #006400; 
+            color: #666666; 
         }
         [data-theme="dark"] .mode-selector button.active { 
-            background: #003300; 
+            background: #333333; 
             color: #f0f0f0; 
         }
         .dark-mode-toggle {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 0.2);
             color: var(--header-text);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 0.3);
             border-radius: 12px;
             padding: 5px 10px;
             cursor: pointer;
@@ -122,7 +122,7 @@
             transition: all 0.2s ease;
         }
         .dark-mode-toggle:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 0.3);
         }
         .dashboard { 
             padding: 10px; 
@@ -141,12 +141,40 @@
             overflow-y: auto; 
             max-height: calc(100vh - 180px);
         }
+        .stories-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding: 8px 4px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--scrollbar-thumb) #f0f0f0;
+        }
+        [data-theme="dark"] .stories-container {
+            scrollbar-color: var(--scrollbar-thumb) #222;
+        }
+        .stories-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .stories-container::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 3px;
+        }
+        [data-theme="dark"] .stories-container::-webkit-scrollbar-track {
+            background: #222;
+        }
+        .stories-container::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 3px;
+        }
         .story-card { 
             background: var(--story-card-bg); 
             border-radius: 6px; 
             padding: 12px; 
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07); 
+            transition: transform 0.2s ease; 
             border: 1px solid var(--border-color); 
+            min-width: 320px;
+            flex-shrink: 0;
         }
         [data-theme="dark"] .story-card { 
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
@@ -343,6 +371,21 @@
         .popup-close-btn:hover {
             background: var(--btn-hover);
         }
+        .popup-add-btn {
+            background: #2ecc71;
+            color: white;
+        }
+        .popup-add-btn:hover {
+            background: #27ae60;
+        }
+        .popup-added-btn {
+            background: #3498db;
+            color: white;
+            cursor: default;
+        }
+        [data-theme="dark"] .popup-added-btn {
+            background: #2196f3;
+        }
         .overlay {
             position: fixed;
             top: 0;
@@ -433,12 +476,83 @@
             text-align: center;
             margin: 10px;
         }
+        .vocabulary-tracker {
+            margin-top: 15px;
+            padding: 10px;
+            background: var(--dashboard-bg);
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+        }
+        .vocabulary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .vocabulary-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--bold-word-color);
+        }
+        .copy-btn {
+            background: var(--btn-bg);
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover {
+            background: var(--btn-hover);
+        }
+        .copy-btn.copied {
+            background: #2ecc71;
+        }
+        [data-theme="dark"] .copy-btn.copied {
+            background: #4caf50;
+        }
+        .vocabulary-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 4px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        .vocabulary-item {
+            padding: 4px;
+            background: #f9f9f9;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        [data-theme="dark"] .vocabulary-item {
+            background: #252525;
+        }
+        .empty-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 10px;
+        }
+        [data-theme="dark"] .empty-message {
+            color: #aaa;
+        }
+        #copyTextarea {
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+        }
     </style>
 </head>
 <body>
     <div class="container" id="appContainer">
         <div class="header">
-            <div class="app-title">LEVEL 3. WEEK 48</div>
+            <div class="app-title">Week 49 Level 1</div>
             <div class="mode-selector">
                 <button id="wordModeBtn" class="active" onclick="setMode('word')">Word Mode</button>
                 <button id="sentenceModeBtn" onclick="setMode('sentence')">Sentence Mode</button>
@@ -457,8 +571,20 @@
             </div>
         </div>
         <div class="content">
-            <div id="storiesContainer">
-                <!-- La historia se cargará aquí desde Google Sheets -->
+            <div class="stories-container" id="storiesContainer">
+                <!-- Las historias se cargarán aquí desde Google Sheets -->
+            </div>
+            <div class="vocabulary-tracker">
+                <div class="vocabulary-header">
+                    <div class="vocabulary-title">Lista de Vocabulario</div>
+                    <button class="copy-btn" id="copyBtn" onclick="copyVocabulary()">Copiar para Quizlet</button>
+                </div>
+                <div class="vocabulary-list" id="vocabularyList">
+                    <div class="vocabulary-column" id="spanishColumn">
+                        <div class="empty-message">No hay palabras seleccionadas aún. Haz clic en palabras para agregarlas.</div>
+                    </div>
+                    <div class="vocabulary-column" id="englishColumn"></div>
+                </div>
             </div>
         </div>
         <div class="footer">
@@ -479,20 +605,24 @@
         </div>
         <div class="popup-footer">
             <button class="popup-btn popup-close-btn" onclick="closePopup()">Cerrar</button>
+            <button class="popup-btn popup-add-btn" id="popupAddBtn" onclick="addCurrentWordToVocabulary()">Agregar a lista</button>
         </div>
     </div>
+    <textarea id="copyTextarea"></textarea>
     <div class="notification" id="notification"></div>
     <script>
         // === CONFIGURACIÓN DE GOOGLE SHEETS ===
         const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1L_ljS7YU2Fq2Ib2ECAmg6wAhDRih2C6ct484lXZ3un4/export?format=csv';
         const HISTORIAS_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1zsJMXQ0kWsuWgvtbmrdu1L3h6iGU7zZRubNcsbzFwuk/export?format=csv&gid=0';
         const HISTORIAS_SHEETS_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1zsJMXQ0kWsuWgvtbmrdu1L3h6iGU7zZRubNcsbzFwuk/edit?gid=0';
-        const SEMANA_FILTRO = "48.03.";
+        const SEMANA_FILTRO = "49.01.";
 
         // === VARIABLES GLOBALES ===
         let wordDatabase = {};
         let currentMode = 'word';
         let currentStories = [];
+        let selectedWords = new Map();
+        let currentWord = null;
 
         // === FUNCIONES PARA PROCESAR MARCADORES DE TEXTO ===
         function procesarMarcadoresTexto(texto) {
@@ -510,24 +640,32 @@
                 return `{{PLAIN_${plainParts.length - 1}}}`;
             });
 
-            // Construir grupo semántico SIN sufijos (solo raíces)
+            // Construir grupo semántico SIN sufijos
             const boldGroup = boldParts.map(item => item.split('_')[0]).join(' ');
             const plainGroup = plainParts.map(item => item.split('_')[0]).join(' ');
 
             // Reemplazar con texto visual (raíz + sufijo) y data-group limpio
             tempText = tempText.replace(/\{\{BOLD_(\d+)\}\}/g, (match, index) => {
                 const full = boldParts[index];
-                const [raiz, sufijo = ''] = full.split('_', 2);
-                return `<span class="bold-word word-group" data-group="${boldGroup}">${raiz + sufijo}</span>`;
+                if (full.includes('_')) {
+                    const [raiz, sufijo = ''] = full.split('_', 2);
+                    return `<span class="bold-word word-group" data-group="${boldGroup}">${raiz}</span>${sufijo}`;
+                } else {
+                    return `<span class="bold-word word-group" data-group="${boldGroup}">${full}</span>`;
+                }
             });
 
             tempText = tempText.replace(/\{\{PLAIN_(\d+)\}\}/g, (match, index) => {
                 const full = plainParts[index];
-                const [raiz, sufijo = ''] = full.split('_', 2);
-                return `<span class="word-group" data-group="${plainGroup}">${raiz + sufijo}</span>`;
+                if (full.includes('_')) {
+                    const [raiz, sufijo = ''] = full.split('_', 2);
+                    return `<span class="word-group" data-group="${plainGroup}">${raiz}</span>${sufijo}`;
+                } else {
+                    return `<span class="word-group" data-group="${plainGroup}">${full}</span>`;
+                }
             });
 
-            // Otros tipos: *~ ~*, ~ ~, * *
+            // Otros marcadores
             tempText = tempText.replace(/\*\~([^~]+)\~\*/g, '<span class="bold-word word-group" data-group="$1">$1</span>');
             tempText = tempText.replace(/\~([^~]+)\~/g, '<span class="word-group" data-group="$1">$1</span>');
             tempText = tempText.replace(/\*([^*]+)\*/g, '<span class="bold-word">$1</span>');
@@ -538,22 +676,19 @@
         // === FUNCIONES PARA CARGAR DESDE GOOGLE SHEETS ===
         async function cargarHistoriasDesdeSheets() {
             try {
-                showNotification('📥 Cargando historia desde Google Sheets...');
+                showNotification('📥 Cargando historias desde Google Sheets...');
                 const respuesta = await fetch(HISTORIAS_SHEETS_URL);
                 if (!respuesta.ok) throw new Error('Error al cargar el Sheet de historias');
                 const csvData = await respuesta.text();
                 const historias = procesarCSVHistorias(csvData);
-                if (historias.length > 0) {
-                    currentStories = [historias[0]];
-                    mostrarHistorias(currentStories);
-                    showNotification(`✅ Historia cargada: ${historias[0].titulo}`);
-                } else {
-                    throw new Error('No se encontraron historias que coincidan con el filtro: ' + SEMANA_FILTRO);
-                }
-                return historias;
+                const historiasFiltradas = historias.filter(h => h.id.startsWith(SEMANA_FILTRO));
+                currentStories = historiasFiltradas;
+                mostrarHistorias(currentStories);
+                showNotification(`✅ ${historiasFiltradas.length} historias cargadas`);
+                return historiasFiltradas;
             } catch (error) {
-                console.error('❌ Error cargando historias desde Google Sheets:', error);
-                mostrarError(`Error cargando desde Google Sheets: ${error.message}`);
+                console.error('❌ Error cargando historias:', error);
+                mostrarError(`Error: ${error.message}`);
                 throw error;
             }
         }
@@ -578,12 +713,8 @@
                 }
                 columnas.push(current);
                 if (columnas.length >= 6) {
-                    const id = columnas[0].trim().replace(/"/g, '');
-                    if (!id.startsWith(SEMANA_FILTRO)) {
-                        continue;
-                    }
                     const historia = {
-                        id,
+                        id: columnas[0].trim().replace(/"/g, ''),
                         titulo: columnas[1].trim().replace(/"/g, ''),
                         audioURL: columnas[2].trim().replace(/"/g, ''),
                         imagenURL: columnas[3].trim().replace(/"/g, ''),
@@ -642,27 +773,76 @@
             return storyCard;
         }
 
-        // === DEMÁS FUNCIONES (AUDIO, DICCIONARIO, MODO OSCURO, ETC.) ===
-        // (Se mantienen igual que en tu código original, ya que funcionan correctamente)
-
-        async function refreshStoriesFromSheets() {
-            const btn = document.getElementById('refreshStoriesBtn');
-            const spinner = btn.querySelector('.loading-spinner');
-            btn.disabled = true;
-            spinner.style.display = 'inline-block';
-            btn.innerHTML = '<span class="loading-spinner"></span>Actualizando...';
+        // === FUNCIONES DE VOCABULARIO ===
+        function addCurrentWordToVocabulary() {
+            if (!currentWord) return;
+            const clean = currentWord.toLowerCase().replace(/[.,!?;:'"]/g, '');
+            if (clean.length < 2) return;
+            const info = wordDatabase[clean] || { 
+                meaning: getTranslation(clean), 
+                pronunciation: getPronunciation(clean) 
+            };
+            selectedWords.set(clean, info);
+            updateVocabularyDisplay();
+            const addBtn = document.getElementById('popupAddBtn');
+            addBtn.textContent = 'Ya agregada';
+            addBtn.classList.remove('popup-add-btn');
+            addBtn.classList.add('popup-added-btn');
+            addBtn.disabled = true;
+            showNotification(`${clean} agregada a la lista`);
+        }
+        function updateVocabularyDisplay() {
+            const spanishCol = document.getElementById('spanishColumn');
+            const englishCol = document.getElementById('englishColumn');
+            spanishCol.innerHTML = '';
+            englishCol.innerHTML = '';
+            if (selectedWords.size === 0) {
+                spanishCol.innerHTML = '<div class="empty-message">No hay palabras seleccionadas aún. Haz clic en palabras para agregarlas.</div>';
+                return;
+            }
+            const sorted = Array.from(selectedWords.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+            sorted.forEach(([word, info]) => {
+                const spanItem = document.createElement('div');
+                spanItem.className = 'vocabulary-item';
+                spanItem.textContent = info.meaning;
+                spanishCol.appendChild(spanItem);
+                const engItem = document.createElement('div');
+                engItem.className = 'vocabulary-item';
+                engItem.innerHTML = `${word}<br><small>(${info.pronunciation})</small>`;
+                englishCol.appendChild(engItem);
+            });
+        }
+        function copyVocabulary() {
+            if (selectedWords.size === 0) {
+                alert('No hay palabras para copiar.');
+                return;
+            }
+            const sorted = Array.from(selectedWords.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+            let text = '';
+            sorted.forEach(([word, info]) => {
+                text += `${info.meaning} = ${word} (${info.pronunciation})\n`;
+            });
+            const ta = document.getElementById('copyTextarea');
+            ta.value = text;
+            ta.select();
+            ta.setSelectionRange(0, 99999);
             try {
-                await cargarHistoriasDesdeSheets();
-            } catch (error) {}
-            finally {
-                btn.disabled = false;
-                spinner.style.display = 'none';
-                btn.innerHTML = 'Actualizar desde Google Sheets';
+                if (document.execCommand('copy')) {
+                    showNotification('¡Vocabulario copiado!');
+                    const btn = document.getElementById('copyBtn');
+                    btn.classList.add('copied');
+                    btn.textContent = '¡Copiado!';
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.textContent = 'Copiar para Quizlet';
+                    }, 2000);
+                }
+            } catch (err) {
+                alert('No se pudo copiar automáticamente.');
             }
         }
-        function openGoogleSheets() {
-            window.open(HISTORIAS_SHEETS_EDIT_URL, '_blank');
-        }
+
+        // === RESTO DEL CÓDIGO (vocabulario, modo oscuro, popups, etc.) ===
         async function cargarDesdeGoogleSheets() {
             try {
                 const res = await fetch(GOOGLE_SHEETS_URL);
@@ -705,7 +885,8 @@
                 "wakes up": "despierta", "starts playing": "empieza a jugar",
                 "turns off": "apaga", "eats": "come", "sleeps": "duerme",
                 "get": "obtener", "fat": "gordo", "get fat": "engordar",
-                "getting": "obteniendo", "very": "muy"
+                "getting": "obteniendo", "very": "muy", "stare": "mirar fijamente",
+                "stared": "miró fijamente", "quitting": "renunciar", "future": "futuro"
             };
             for (const [word, meaning] of Object.entries(translations)) {
                 wordDatabase[word] = {
@@ -725,7 +906,8 @@
                 "wakes up": "uieks ap", "starts playing": "starts pleiin",
                 "turns off": "turns of", "eats": "its", "sleeps": "slips",
                 "get": "guet", "fat": "fat", "get fat": "guet fat",
-                "getting": "gueting", "very": "veri"
+                "getting": "gueting", "very": "veri", "stare": "ster",
+                "stared": "sterd", "quitting": "kuitin", "future": "fiutcher"
             };
             return prons[word] || word;
         }
@@ -736,17 +918,6 @@
         function getPronunciation(word) {
             const clean = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
             return wordDatabase[clean]?.pronunciation || generateSpanishPronunciation(clean);
-        }
-        function toggleDarkMode() {
-            const container = document.getElementById('appContainer');
-            const isDark = container.getAttribute('data-theme') === 'dark';
-            if (isDark) {
-                container.removeAttribute('data-theme');
-                localStorage.setItem('theme', 'light');
-            } else {
-                container.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-            }
         }
         function createClickableSpan(word, parentGroup = null) {
             const span = document.createElement('span');
@@ -765,14 +936,16 @@
             return span;
         }
         function processTextForWordMode() {
-            const content = document.querySelector('.story-content');
-            if (!content) return;
-            content.querySelectorAll('.clause').forEach(clause => {
-                const html = clause.innerHTML;
-                const temp = document.createElement('div');
-                temp.innerHTML = html;
-                clause.innerHTML = '';
-                processNode(temp, clause);
+            const contents = document.querySelectorAll('.story-content');
+            contents.forEach(content => {
+                const clauses = content.querySelectorAll('.clause');
+                clauses.forEach(clause => {
+                    const html = clause.innerHTML;
+                    const temp = document.createElement('div');
+                    temp.innerHTML = html;
+                    clause.innerHTML = '';
+                    processNode(temp, clause);
+                });
             });
         }
         function processNode(source, target) {
@@ -819,15 +992,16 @@
             });
         }
         function processTextForSentenceMode() {
-            const content = document.querySelector('.story-content');
-            if (!content) return;
-            content.querySelectorAll('.clause').forEach(clause => {
-                const span = document.createElement('span');
-                span.className = 'sentence';
-                span.innerHTML = clause.innerHTML;
-                span.addEventListener('click', e => speakSentence(span.textContent));
-                clause.innerHTML = '';
-                clause.appendChild(span);
+            const contents = document.querySelectorAll('.story-content');
+            contents.forEach(content => {
+                content.querySelectorAll('.clause').forEach(clause => {
+                    const span = document.createElement('span');
+                    span.className = 'sentence';
+                    span.innerHTML = clause.innerHTML;
+                    span.addEventListener('click', e => speakSentence(span.textContent));
+                    clause.innerHTML = '';
+                    clause.appendChild(span);
+                });
             });
         }
         function setMode(mode) {
@@ -864,6 +1038,19 @@
             positionPopup(event);
             document.getElementById('wordPopup').style.display = 'block';
             document.getElementById('popupOverlay').style.display = 'block';
+            currentWord = clean;
+            const addBtn = document.getElementById('popupAddBtn');
+            if (selectedWords.has(clean)) {
+                addBtn.textContent = 'Ya agregada';
+                addBtn.classList.remove('popup-add-btn');
+                addBtn.classList.add('popup-added-btn');
+                addBtn.disabled = true;
+            } else {
+                addBtn.textContent = 'Agregar a lista';
+                addBtn.classList.remove('popup-added-btn');
+                addBtn.classList.add('popup-add-btn');
+                addBtn.disabled = false;
+            }
         }
         function positionPopup(event) {
             const popup = document.getElementById('wordPopup');
@@ -881,6 +1068,35 @@
         function closePopup() {
             document.getElementById('wordPopup').style.display = 'none';
             document.getElementById('popupOverlay').style.display = 'none';
+        }
+        function toggleDarkMode() {
+            const container = document.getElementById('appContainer');
+            const isDark = container.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                container.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                container.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        async function refreshStoriesFromSheets() {
+            const btn = document.getElementById('refreshStoriesBtn');
+            const spinner = btn.querySelector('.loading-spinner');
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            btn.innerHTML = '<span class="loading-spinner"></span>Actualizando...';
+            try {
+                await cargarHistoriasDesdeSheets();
+            } catch (error) {}
+            finally {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                btn.innerHTML = 'Actualizar desde Google Sheets';
+            }
+        }
+        function openGoogleSheets() {
+            window.open(HISTORIAS_SHEETS_EDIT_URL, '_blank');
         }
         function showNotification(message) {
             const n = document.getElementById('notification');
@@ -904,4 +1120,3 @@
     </script>
 </body>
 </html>
-
