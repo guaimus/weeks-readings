@@ -230,7 +230,7 @@
             padding: 0 1px;
             transition: all 0.1s;
             border-radius: 2px;
-            display: inline;
+            display: inline-block;
         }
         .word-group:hover {
             background-color: #f0f8ff;
@@ -498,50 +498,44 @@
 
         // === FUNCIONES PARA PROCESAR MARCADORES DE TEXTO ===
         function procesarMarcadoresTexto(texto) {
-            // Paso 1: Identificar todos los marcadores *^...^* y ^...^ en la oración
-            let oracionProtegida = texto;
+            let tempText = texto;
             const boldParts = [];
             const plainParts = [];
-            
-            // Extraer *^...^* y reemplazar por marcadores temporales
-            oracionProtegida = oracionProtegida.replace(/\*\^([^*^]+)\^\*/g, (match, contenido) => {
+
+            // Extraer *^...^* y ^...^
+            tempText = tempText.replace(/\*\^([^*^]+)\^\*/g, (match, contenido) => {
                 boldParts.push(contenido);
                 return `{{BOLD_${boldParts.length - 1}}}`;
             });
-            
-            // Extraer ^...^ y reemplazar por marcadores temporales
-            oracionProtegida = oracionProtegida.replace(/\^([^*^]+)\^/g, (match, contenido) => {
+            tempText = tempText.replace(/\^([^*^]+)\^/g, (match, contenido) => {
                 plainParts.push(contenido);
                 return `{{PLAIN_${plainParts.length - 1}}}`;
             });
 
-            // Construir grupos completos
-            const boldGroup = boldParts.join(' ');
-            const plainGroup = plainParts.join(' ');
+            // Construir grupo semántico sin sufijos (stay up, no stays up)
+            const boldGroup = boldParts.map(p => p.split('_')[0]).join(' ');
+            const plainGroup = plainParts.map(p => p.split('_')[0]).join(' ');
 
-            // Paso 2: Restaurar marcadores con el grupo correcto
-            // Procesar *^...^* -> puede tener sufijos como "_s"
-            oracionProtegida = oracionProtegida.replace(/\{\{BOLD_(\d+)\}\}/g, (match, index) => {
-                const contenido = boldParts[index];
-                if (contenido.includes('_')) {
-                    const [raiz, sufijo] = contenido.split('_', 2);
-                    return `<span class="bold-word word-group" data-group="${boldGroup}">${raiz}</span>${sufijo}`;
-                } else {
-                    return `<span class="bold-word word-group" data-group="${boldGroup}">${contenido}</span>`;
-                }
+            // Reemplazar con texto visual (stays) y grupo semántico (stay up)
+            tempText = tempText.replace(/\{\{BOLD_(\d+)\}\}/g, (match, index) => {
+                const full = boldParts[index];
+                const [raiz, sufijo = ''] = full.split('_', 2);
+                const display = raiz + sufijo;
+                return `<span class="bold-word word-group" data-group="${boldGroup}">${display}</span>`;
+            });
+            tempText = tempText.replace(/\{\{PLAIN_(\d+)\}\}/g, (match, index) => {
+                const full = plainParts[index];
+                const [raiz, sufijo = ''] = full.split('_', 2);
+                const display = raiz + sufijo;
+                return `<span class="word-group" data-group="${plainGroup}">${display}</span>`;
             });
 
-            // Procesar ^...^
-            oracionProtegida = oracionProtegida.replace(/\{\{PLAIN_(\d+)\}\}/g, (match, index) => {
-                return `<span class="word-group" data-group="${plainGroup}">${plainParts[index]}</span>`;
-            });
+            // Otros marcadores
+            tempText = tempText.replace(/\*\~([^~]+)\~\*/g, '<span class="bold-word word-group" data-group="$1">$1</span>');
+            tempText = tempText.replace(/\~([^~]+)\~/g, '<span class="word-group" data-group="$1">$1</span>');
+            tempText = tempText.replace(/\*([^*]+)\*/g, '<span class="bold-word">$1</span>');
 
-            // Paso 3: Procesar otros marcadores (en orden de prioridad)
-            oracionProtegida = oracionProtegida.replace(/\*\~([^~]+)\~\*/g, '<span class="bold-word word-group" data-group="$1">$1</span>');
-            oracionProtegida = oracionProtegida.replace(/\~([^~]+)\~/g, '<span class="word-group" data-group="$1">$1</span>');
-            oracionProtegida = oracionProtegida.replace(/\*([^*]+)\*/g, '<span class="bold-word">$1</span>');
-
-            return oracionProtegida;
+            return tempText;
         }
 
         // === FUNCIONES PARA CARGAR DESDE GOOGLE SHEETS ===
@@ -784,7 +778,7 @@
             span.style.borderBottom = '1px dotted #7a7a7a';
             span.style.padding = '0 1px';
             span.style.borderRadius = '2px';
-            span.style.display = 'inline';
+            span.style.display = 'inline-block';
             span.addEventListener('click', function(e) {
                 if (parentGroup) {
                     handleWordClick(parentGroup, e);
