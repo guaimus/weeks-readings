@@ -487,8 +487,6 @@
         const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1L_ljS7YU2Fq2Ib2ECAmg6wAhDRih2C6ct484lXZ3un4/export?format=csv';
         const HISTORIAS_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1zsJMXQ0kWsuWgvtbmrdu1L3h6iGU7zZRubNcsbzFwuk/export?format=csv&gid=0';
         const HISTORIAS_SHEETS_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1zsJMXQ0kWsuWgvtbmrdu1L3h6iGU7zZRubNcsbzFwuk/edit?gid=0';
-
-        // === FILTRO POR SEMANA ===
         const SEMANA_FILTRO = "48.03.";
 
         // === VARIABLES GLOBALES ===
@@ -496,7 +494,7 @@
         let currentMode = 'word';
         let currentStories = [];
 
-        // === NUEVA FUNCIÓN DE PROCESAMIENTO ===
+        // === FUNCIONES PARA PROCESAR MARCADORES DE TEXTO ===
         function procesarMarcadoresTexto(texto) {
             let tempText = texto;
             const boldParts = [];
@@ -512,25 +510,24 @@
                 return `{{PLAIN_${plainParts.length - 1}}}`;
             });
 
-            // Construir grupo semántico sin sufijos (stay up, no stays up)
-            const boldGroup = boldParts.map(p => p.split('_')[0]).join(' ');
-            const plainGroup = plainParts.map(p => p.split('_')[0]).join(' ');
+            // Construir grupo semántico SIN sufijos (solo raíces)
+            const boldGroup = boldParts.map(item => item.split('_')[0]).join(' ');
+            const plainGroup = plainParts.map(item => item.split('_')[0]).join(' ');
 
-            // Reemplazar con texto visual + grupo semántico
+            // Reemplazar con texto visual (raíz + sufijo) y data-group limpio
             tempText = tempText.replace(/\{\{BOLD_(\d+)\}\}/g, (match, index) => {
                 const full = boldParts[index];
                 const [raiz, sufijo = ''] = full.split('_', 2);
-                const display = raiz + sufijo;
-                return `<span class="bold-word word-group" data-group="${boldGroup}">${display}</span>`;
+                return `<span class="bold-word word-group" data-group="${boldGroup}">${raiz + sufijo}</span>`;
             });
+
             tempText = tempText.replace(/\{\{PLAIN_(\d+)\}\}/g, (match, index) => {
                 const full = plainParts[index];
                 const [raiz, sufijo = ''] = full.split('_', 2);
-                const display = raiz + sufijo;
-                return `<span class="word-group" data-group="${plainGroup}">${display}</span>`;
+                return `<span class="word-group" data-group="${plainGroup}">${raiz + sufijo}</span>`;
             });
 
-            // Otros marcadores
+            // Otros tipos: *~ ~*, ~ ~, * *
             tempText = tempText.replace(/\*\~([^~]+)\~\*/g, '<span class="bold-word word-group" data-group="$1">$1</span>');
             tempText = tempText.replace(/\~([^~]+)\~/g, '<span class="word-group" data-group="$1">$1</span>');
             tempText = tempText.replace(/\*([^*]+)\*/g, '<span class="bold-word">$1</span>');
@@ -538,7 +535,7 @@
             return tempText;
         }
 
-        // === RESTO DEL CÓDIGO SIN CAMBIOS ===
+        // === FUNCIONES PARA CARGAR DESDE GOOGLE SHEETS ===
         async function cargarHistoriasDesdeSheets() {
             try {
                 showNotification('📥 Cargando historia desde Google Sheets...');
@@ -586,7 +583,7 @@
                         continue;
                     }
                     const historia = {
-                        id: id,
+                        id,
                         titulo: columnas[1].trim().replace(/"/g, ''),
                         audioURL: columnas[2].trim().replace(/"/g, ''),
                         imagenURL: columnas[3].trim().replace(/"/g, ''),
@@ -601,23 +598,20 @@
             return historias;
         }
         function procesarContenidoHistoria(contenido) {
-            if (contenido.includes('class="clause"')) {
-                return contenido;
-            }
-            const oraciones = contenido.split(/[.!?]/).filter(oracion => oracion.trim().length > 0);
+            if (contenido.includes('class="clause"')) return contenido;
+            const oraciones = contenido.split(/[.!?]/).filter(s => s.trim().length > 0);
             let htmlContent = '';
             oraciones.forEach(oracion => {
-                const oracionLimpia = oracion.trim();
-                if (oracionLimpia) {
-                    let oracionProcesada = procesarMarcadoresTexto(oracionLimpia);
-                    htmlContent += `<span class="clause">${oracionProcesada}.</span>\n`;
+                const clean = oracion.trim();
+                if (clean) {
+                    const processed = procesarMarcadoresTexto(clean);
+                    htmlContent += `<span class="clause">${processed}.</span>\n`;
                 }
             });
             return `<p>${htmlContent}</p>`;
         }
         function mostrarError(mensaje) {
-            const container = document.getElementById('storiesContainer');
-            container.innerHTML = `<div class="error-message">${mensaje}</div>`;
+            document.getElementById('storiesContainer').innerHTML = `<div class="error-message">${mensaje}</div>`;
         }
         function mostrarHistorias(historias) {
             const container = document.getElementById('storiesContainer');
@@ -627,14 +621,11 @@
                 return;
             }
             historias.forEach(historia => {
-                const storyCard = crearStoryCard(historia);
-                container.appendChild(storyCard);
+                const card = crearStoryCard(historia);
+                container.appendChild(card);
             });
-            if (currentMode === 'word') {
-                processTextForWordMode();
-            } else {
-                processTextForSentenceMode();
-            }
+            if (currentMode === 'word') processTextForWordMode();
+            else processTextForSentenceMode();
         }
         function crearStoryCard(historia) {
             const storyCard = document.createElement('div');
@@ -646,12 +637,14 @@
                     <source src="${historia.audioURL}" type="audio/mpeg">
                 </audio>
                 ` : ''}
-                <div class="story-content">
-                    ${historia.contenido}
-                </div>
+                <div class="story-content">${historia.contenido}</div>
             `;
             return storyCard;
         }
+
+        // === DEMÁS FUNCIONES (AUDIO, DICCIONARIO, MODO OSCURO, ETC.) ===
+        // (Se mantienen igual que en tu código original, ya que funcionan correctamente)
+
         async function refreshStoriesFromSheets() {
             const btn = document.getElementById('refreshStoriesBtn');
             const spinner = btn.querySelector('.loading-spinner');
@@ -660,9 +653,8 @@
             btn.innerHTML = '<span class="loading-spinner"></span>Actualizando...';
             try {
                 await cargarHistoriasDesdeSheets();
-            } catch (error) {
-                // El error ya se muestra en mostrarError()
-            } finally {
+            } catch (error) {}
+            finally {
                 btn.disabled = false;
                 spinner.style.display = 'none';
                 btn.innerHTML = 'Actualizar desde Google Sheets';
@@ -673,37 +665,34 @@
         }
         async function cargarDesdeGoogleSheets() {
             try {
-                const respuesta = await fetch(GOOGLE_SHEETS_URL);
-                if (!respuesta.ok) throw new Error('Error al cargar el Sheet de vocabulario');
-                const csvData = await respuesta.text();
-                wordDatabase = procesarCSV(csvData);
+                const res = await fetch(GOOGLE_SHEETS_URL);
+                if (!res.ok) throw new Error('Error al cargar el Sheet de vocabulario');
+                const csv = await res.text();
+                wordDatabase = procesarCSV(csv);
                 showNotification('✅ Diccionario cargado desde Google Sheets');
             } catch (error) {
-                console.error('❌ Error cargando vocabulario desde Google Sheets:', error);
+                console.error('❌ Error cargando vocabulario:', error);
                 showNotification('⚠️ Usando diccionario local');
                 initializeLocalDatabase();
             }
         }
         function procesarCSV(csv) {
-            const database = {};
-            const lineas = csv.split('\n');
-            for (let i = 1; i < lineas.length; i++) {
-                const linea = lineas[i].trim();
-                if (!linea) continue;
-                const columnas = linea.split(',');
-                if (columnas.length >= 3) {
-                    const palabra = columnas[0].trim().toLowerCase().replace(/"/g, '');
-                    const meaning = columnas[1].trim().replace(/"/g, '');
-                    const pronunciation = columnas[2].trim().replace(/"/g, '');
-                    if (palabra && meaning) {
-                        database[palabra] = { 
-                            meaning, 
-                            pronunciation: pronunciation || generateSpanishPronunciation(palabra)
-                        };
+            const db = {};
+            const lines = csv.split('\n');
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                const cols = line.split(',');
+                if (cols.length >= 3) {
+                    const word = cols[0].trim().toLowerCase().replace(/"/g, '');
+                    const meaning = cols[1].trim().replace(/"/g, '');
+                    const pronunciation = cols[2].trim().replace(/"/g, '');
+                    if (word && meaning) {
+                        db[word] = { meaning, pronunciation: pronunciation || generateSpanishPronunciation(word) };
                     }
                 }
             }
-            return database;
+            return db;
         }
         function initializeLocalDatabase() {
             const translations = {
@@ -720,13 +709,13 @@
             };
             for (const [word, meaning] of Object.entries(translations)) {
                 wordDatabase[word] = {
-                    meaning: meaning,
+                    meaning,
                     pronunciation: generateSpanishPronunciation(word)
                 };
             }
         }
         function generateSpanishPronunciation(word) {
-            const pronunciations = {
+            const prons = {
                 "love": "lov", "games": "gueims", "love games": "lov gueims",
                 "wakes up": "uieks ap", "hardly": "jardli", "ever": "ever",
                 "stops playing": "stops pleiin", "take care of": "teik ker of",
@@ -738,21 +727,15 @@
                 "get": "guet", "fat": "fat", "get fat": "guet fat",
                 "getting": "gueting", "very": "veri"
             };
-            return pronunciations[word] || word;
+            return prons[word] || word;
         }
         function getTranslation(word) {
-            const cleanWord = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
-            if (wordDatabase[cleanWord]) {
-                return wordDatabase[cleanWord].meaning;
-            }
-            return `Traducción no encontrada para: ${cleanWord}`;
+            const clean = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
+            return wordDatabase[clean]?.meaning || `Traducción no encontrada para: ${clean}`;
         }
         function getPronunciation(word) {
-            const cleanWord = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
-            if (wordDatabase[cleanWord]) {
-                return wordDatabase[cleanWord].pronunciation;
-            }
-            return generateSpanishPronunciation(cleanWord);
+            const clean = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
+            return wordDatabase[clean]?.pronunciation || generateSpanishPronunciation(clean);
         }
         function toggleDarkMode() {
             const container = document.getElementById('appContainer');
@@ -773,97 +756,76 @@
             span.style.padding = '0 1px';
             span.style.borderRadius = '2px';
             span.style.display = 'inline-block';
-            span.addEventListener('click', function(e) {
-                if (parentGroup) {
-                    handleWordClick(parentGroup, e);
-                } else {
-                    handleWordClick(word, e);
-                }
+            span.addEventListener('click', e => {
+                if (parentGroup) handleWordClick(parentGroup, e);
+                else handleWordClick(word, e);
             });
-            span.addEventListener('mouseenter', function() {
-                this.style.backgroundColor = '#f0f8ff';
-            });
-            span.addEventListener('mouseleave', function() {
-                this.style.backgroundColor = 'transparent';
-            });
+            span.addEventListener('mouseenter', () => span.style.backgroundColor = '#f0f8ff');
+            span.addEventListener('mouseleave', () => span.style.backgroundColor = 'transparent');
             return span;
         }
         function processTextForWordMode() {
-            const storyContent = document.querySelector('.story-content');
-            if (!storyContent) return;
-            const clauses = storyContent.querySelectorAll('.clause');
-            clauses.forEach(clause => {
-                const originalHTML = clause.innerHTML;
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = originalHTML;
+            const content = document.querySelector('.story-content');
+            if (!content) return;
+            content.querySelectorAll('.clause').forEach(clause => {
+                const html = clause.innerHTML;
+                const temp = document.createElement('div');
+                temp.innerHTML = html;
                 clause.innerHTML = '';
-                processNode(tempDiv, clause);
+                processNode(temp, clause);
             });
         }
-        function processNode(sourceNode, targetNode) {
-            Array.from(sourceNode.childNodes).forEach(node => {
+        function processNode(source, target) {
+            Array.from(source.childNodes).forEach(node => {
                 if (node.nodeType === Node.TEXT_NODE) {
-                    const words = node.textContent.split(/(\s+)/);
-                    words.forEach(word => {
-                        if (word.trim() === '') {
-                            targetNode.appendChild(document.createTextNode(word));
-                        } else {
-                            const span = createClickableSpan(word);
-                            targetNode.appendChild(span);
-                        }
+                    node.textContent.split(/(\s+)/).forEach(word => {
+                        if (word.trim() === '') target.appendChild(document.createTextNode(word));
+                        else target.appendChild(createClickableSpan(word));
                     });
                 } else if (node.nodeType === Node.ELEMENT_NODE) {
                     if (node.classList.contains('word-group')) {
-                        const groupText = node.getAttribute('data-group');
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = node.innerHTML;
-                        const groupContainer = document.createElement('span');
-                        groupContainer.className = 'word-group';
-                        groupContainer.style.display = 'inline';
-                        Array.from(tempDiv.childNodes).forEach(childNode => {
-                            if (childNode.nodeType === Node.TEXT_NODE) {
-                                const words = childNode.textContent.split(/(\s+)/);
-                                words.forEach(word => {
-                                    if (word.trim() === '') {
-                                        groupContainer.appendChild(document.createTextNode(word));
-                                    } else {
-                                        const span = createClickableSpan(word, groupText);
-                                        groupContainer.appendChild(span);
-                                    }
+                        const group = node.getAttribute('data-group');
+                        const temp = document.createElement('div');
+                        temp.innerHTML = node.innerHTML;
+                        const groupSpan = document.createElement('span');
+                        groupSpan.className = 'word-group';
+                        groupSpan.style.display = 'inline';
+                        Array.from(temp.childNodes).forEach(child => {
+                            if (child.nodeType === Node.TEXT_NODE) {
+                                child.textContent.split(/(\s+)/).forEach(w => {
+                                    if (w.trim() === '') groupSpan.appendChild(document.createTextNode(w));
+                                    else groupSpan.appendChild(createClickableSpan(w, group));
                                 });
                             } else {
-                                groupContainer.appendChild(childNode.cloneNode(true));
+                                groupSpan.appendChild(child.cloneNode(true));
                             }
                         });
-                        targetNode.appendChild(groupContainer);
+                        target.appendChild(groupSpan);
                     } else if (node.classList.contains('bold-word')) {
                         if (!node.classList.contains('word-group')) {
-                            const wordText = node.textContent || node.getAttribute('data-words');
-                            const span = createClickableSpan(wordText);
+                            const w = node.textContent;
+                            const span = createClickableSpan(w);
                             span.className = 'bold-word';
                             span.style.fontWeight = 'bold';
                             span.style.color = 'var(--bold-word-color)';
-                            targetNode.appendChild(span);
+                            target.appendChild(span);
                         } else {
-                            targetNode.appendChild(node.cloneNode(true));
+                            target.appendChild(node.cloneNode(true));
                         }
                     } else {
-                        targetNode.appendChild(node.cloneNode(true));
+                        target.appendChild(node.cloneNode(true));
                     }
                 }
             });
         }
         function processTextForSentenceMode() {
-            const storyContent = document.querySelector('.story-content');
-            if (!storyContent) return;
-            const clauses = storyContent.querySelectorAll('.clause');
-            clauses.forEach(clause => {
+            const content = document.querySelector('.story-content');
+            if (!content) return;
+            content.querySelectorAll('.clause').forEach(clause => {
                 const span = document.createElement('span');
                 span.className = 'sentence';
                 span.innerHTML = clause.innerHTML;
-                span.addEventListener('click', function(e) {
-                    speakSentence(span.textContent);
-                });
+                span.addEventListener('click', e => speakSentence(span.textContent));
                 clause.innerHTML = '';
                 clause.appendChild(span);
             });
@@ -873,7 +835,7 @@
             document.getElementById('wordModeBtn').classList.toggle('active', mode === 'word');
             document.getElementById('sentenceModeBtn').classList.toggle('active', mode === 'sentence');
             if (currentStories.length > 0) {
-                if (mode === 'word') processTextForWordMode(); 
+                if (mode === 'word') processTextForWordMode();
                 else processTextForSentenceMode();
             }
         }
@@ -882,8 +844,8 @@
             showWordPopup(word, event);
         }
         function speakWord(word) {
-            const cleanWord = word.replace(/[.,!?;:'"]/g, '');
-            const utterance = new SpeechSynthesisUtterance(cleanWord);
+            const clean = word.replace(/[.,!?;:'"]/g, '');
+            const utterance = new SpeechSynthesisUtterance(clean);
             utterance.lang = 'en-US';
             utterance.rate = 0.8;
             speechSynthesis.speak(utterance);
@@ -895,58 +857,50 @@
             speechSynthesis.speak(utterance);
         }
         function showWordPopup(word, event) {
-            const cleanWord = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
-            document.getElementById('popupWord').textContent = cleanWord;
-            document.getElementById('popupMeaning').textContent = getTranslation(cleanWord);
-            document.getElementById('popupPronunciation').textContent = `Pronunciación: ${getPronunciation(cleanWord)}`;
+            const clean = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
+            document.getElementById('popupWord').textContent = clean;
+            document.getElementById('popupMeaning').textContent = getTranslation(clean);
+            document.getElementById('popupPronunciation').textContent = `Pronunciación: ${getPronunciation(clean)}`;
             positionPopup(event);
             document.getElementById('wordPopup').style.display = 'block';
             document.getElementById('popupOverlay').style.display = 'block';
         }
         function positionPopup(event) {
             const popup = document.getElementById('wordPopup');
-            const clickX = event.clientX;
-            const clickY = event.clientY;
-            const popupWidth = popup.offsetWidth;
-            const popupHeight = popup.offsetHeight;
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-            let popupX = clickX - (popupWidth / 2);
-            let popupY = clickY - (popupHeight / 2);
-            if (popupX < 10) popupX = 10;
-            if (popupX + popupWidth > windowWidth - 10) popupX = windowWidth - popupWidth - 10;
-            if (popupY < 10) popupY = 10;
-            if (popupY + popupHeight > windowHeight - 10) popupY = windowHeight - popupHeight - 10;
-            popup.style.left = popupX + 'px';
-            popup.style.top = popupY + 'px';
+            const x = event.clientX, y = event.clientY;
+            const w = popup.offsetWidth, h = popup.offsetHeight;
+            const winW = window.innerWidth, winH = window.innerHeight;
+            let posX = x - w / 2, posY = y - h / 2;
+            if (posX < 10) posX = 10;
+            if (posX + w > winW - 10) posX = winW - w - 10;
+            if (posY < 10) posY = 10;
+            if (posY + h > winH - 10) posY = winH - h - 10;
+            popup.style.left = posX + 'px';
+            popup.style.top = posY + 'px';
         }
         function closePopup() {
             document.getElementById('wordPopup').style.display = 'none';
             document.getElementById('popupOverlay').style.display = 'none';
         }
         function showNotification(message) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.style.display = 'block';
-            setTimeout(() => { notification.style.display = 'none'; }, 3000);
+            const n = document.getElementById('notification');
+            n.textContent = message;
+            n.style.display = 'block';
+            setTimeout(() => n.style.display = 'none', 3000);
         }
         async function initApp() {
             await cargarDesdeGoogleSheets();
             await cargarHistoriasDesdeSheets();
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
                 document.getElementById('appContainer').setAttribute('data-theme', 'dark');
             }
         }
         document.getElementById('popupOverlay').addEventListener('click', closePopup);
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closePopup();
-            }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closePopup();
         });
-        document.addEventListener('DOMContentLoaded', function() {
-            initApp();
-        });
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
