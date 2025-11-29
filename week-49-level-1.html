@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEVEL 3. WEEK 48 - Weeks Readings</title>
+    <!-- Todo tu CSS sigue igual (se omite por brevedad) -->
+    <style>... (igual que antes) ...</style>
+</head>
+<body>
+    <div class="container" id="appContainer">
+        <div class="header">
+            <div class="app-title">LEVEL 3. WEEK 48</div>
+            <!-- resto del header igual -->
+        </div>
+        <!-- resto del HTML igual -->
+    </div>
+
+    <!-- POP-UP y NOTIFICACIONES (igual) -->
+
+    <script>
+        // === CONFIGURACIÓN DE GOOGLE SHEETS ===
+        const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1L_ljS7YU2Fq2Ib2ECAmg6wAhDRih2C6ct484lXZ3un4/export?format=csv';
+        const HISTORIAS_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1zsJMXQ0kWsuWgvtbmrdu1L3h6iGU7zZRubNcsbzFwuk/export?format=csv&gid=0';
+        const HISTORIAS_SHEETS_EDIT_URL = 'https://docs.google.com/spreadsheets/d/1zsJMXQ0kWsuWgvtbmrdu1L3h6iGU7zZRubNcsbzFwuk/edit?gid=0';
+
+        // === 🔑 FILTRO POR SEMANA - CONFIGURABLE ===
+        const SEMANA_FILTRO = "48.03."; // ← EDITA ESTO para otras semanas
+
+        // === VARIABLES GLOBALES ===
+        let wordDatabase = {};
+        let currentMode = 'word';
+        let currentStories = [];
+
+        // === FUNCIONES PARA PROCESAR MARCADORES DE TEXTO ===
+        // ... (todo igual: procesarMarcadoresTexto, obtenerGrupoCompletoConSufijos, unificarMarcadoresSeparados) ...
+
+        // === FUNCIONES PARA CARGAR DESDE GOOGLE SHEETS ===
+        async function cargarHistoriasDesdeSheets() {
+            try {
+                showNotification('📥 Cargando historia desde Google Sheets...');
+                const respuesta = await fetch(HISTORIAS_SHEETS_URL);
+                if (!respuesta.ok) throw new Error('Error al cargar el Sheet de historias');
+                const csvData = await respuesta.text();
+                const historias = procesarCSVHistorias(csvData);
+                if (historias.length > 0) {
+                    currentStories = [historias[0]]; // Solo la primera historia que coincida
+                    mostrarHistorias(currentStories);
+                    showNotification(`✅ Historia cargada: ${historias[0].titulo}`);
+                } else {
+                    throw new Error('No se encontraron historias que coincidan con el filtro: ' + SEMANA_FILTRO);
+                }
+                return historias;
+            } catch (error) {
+                console.error('❌ Error cargando historias desde Google Sheets:', error);
+                mostrarError(`Error cargando desde Google Sheets: ${error.message}`);
+                throw error;
+            }
+        }
+
+        function procesarCSVHistorias(csv) {
+            const historias = [];
+            const lineas = csv.split('\n');
+            for (let i = 1; i < lineas.length; i++) {
+                const linea = lineas[i].trim();
+                if (!linea) continue;
+                const columnas = [];
+                let current = '';
+                let inQuotes = false;
+                for (let char of linea) {
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        columnas.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                columnas.push(current);
+                if (columnas.length >= 6) {
+                    const id = columnas[0].trim().replace(/"/g, '');
+                    // 🔍 FILTRO: solo incluir si el ID comienza con SEMANA_FILTRO
+                    if (!id.startsWith(SEMANA_FILTRO)) {
+                        continue; // Saltar esta historia
+                    }
+                    const historia = {
+                        id: id,
+                        titulo: columnas[1].trim().replace(/"/g, ''),
+                        audioURL: columnas[2].trim().replace(/"/g, ''),
+                        imagenURL: columnas[3].trim().replace(/"/g, ''),
+                        contenido: procesarContenidoHistoria(columnas[4].trim().replace(/"/g, '')),
+                        videoURL: columnas[5].trim().replace(/"/g, '')
+                    };
+                    if (historia.id && historia.titulo && historia.contenido) {
+                        historias.push(historia);
+                    }
+                }
+            }
+            return historias;
+        }
+
+        // === RESTO DE FUNCIONES SIN CAMBIOS ===
+        // ... (procesarContenidoHistoria, mostrarHistorias, crearStoryCard, etc.) ...
+
+        // === INICIALIZACIÓN ===
+        async function initApp() {
+            await cargarDesdeGoogleSheets();
+            await cargarHistoriasDesdeSheets();
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.getElementById('appContainer').setAttribute('data-theme', 'dark');
+            }
+        }
+
+        // ... (event listeners y resto del script) ...
+    </script>
+</body>
+</html>
