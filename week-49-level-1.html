@@ -26,7 +26,7 @@
             --scrollbar-thumb: #999999;
         }
         [data-theme="dark"] {
-            --bg-color: #1a1a1a;
+            --bg-color: #001a00;
             --text-color: #e0e0e0;
             --card-bg: #1f1f1f;
             --header-bg: linear-gradient(135deg, #444444 0%, #222222 100%);
@@ -90,7 +90,7 @@
         .mode-selector button { 
             background: rgba(255, 255, 255, 0.2); 
             color: var(--header-text); 
-            border: 1px solid rgba(255, 255, 0.3); 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
             border-radius: 12px; 
             padding: 5px 10px; 
             cursor: pointer; 
@@ -98,7 +98,7 @@
             transition: all 0.2s ease; 
         }
         .mode-selector button:hover { 
-            background: rgba(255, 255, 0.3); 
+            background: rgba(255, 255, 255, 0.3); 
         }
         .mode-selector button.active { 
             background: white; 
@@ -109,9 +109,9 @@
             color: #f0f0f0; 
         }
         .dark-mode-toggle {
-            background: rgba(255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.2);
             color: var(--header-text);
-            border: 1px solid rgba(255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
             padding: 5px 10px;
             cursor: pointer;
@@ -122,7 +122,7 @@
             transition: all 0.2s ease;
         }
         .dark-mode-toggle:hover {
-            background: rgba(255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.3);
         }
         .dashboard { 
             padding: 10px; 
@@ -476,6 +476,7 @@
             text-align: center;
             margin: 10px;
         }
+        /* === Vocabulario === */
         .vocabulary-tracker {
             margin-top: 15px;
             padding: 10px;
@@ -773,76 +774,7 @@
             return storyCard;
         }
 
-        // === FUNCIONES DE VOCABULARIO ===
-        function addCurrentWordToVocabulary() {
-            if (!currentWord) return;
-            const clean = currentWord.toLowerCase().replace(/[.,!?;:'"]/g, '');
-            if (clean.length < 2) return;
-            const info = wordDatabase[clean] || { 
-                meaning: getTranslation(clean), 
-                pronunciation: getPronunciation(clean) 
-            };
-            selectedWords.set(clean, info);
-            updateVocabularyDisplay();
-            const addBtn = document.getElementById('popupAddBtn');
-            addBtn.textContent = 'Ya agregada';
-            addBtn.classList.remove('popup-add-btn');
-            addBtn.classList.add('popup-added-btn');
-            addBtn.disabled = true;
-            showNotification(`${clean} agregada a la lista`);
-        }
-        function updateVocabularyDisplay() {
-            const spanishCol = document.getElementById('spanishColumn');
-            const englishCol = document.getElementById('englishColumn');
-            spanishCol.innerHTML = '';
-            englishCol.innerHTML = '';
-            if (selectedWords.size === 0) {
-                spanishCol.innerHTML = '<div class="empty-message">No hay palabras seleccionadas aún. Haz clic en palabras para agregarlas.</div>';
-                return;
-            }
-            const sorted = Array.from(selectedWords.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-            sorted.forEach(([word, info]) => {
-                const spanItem = document.createElement('div');
-                spanItem.className = 'vocabulary-item';
-                spanItem.textContent = info.meaning;
-                spanishCol.appendChild(spanItem);
-                const engItem = document.createElement('div');
-                engItem.className = 'vocabulary-item';
-                engItem.innerHTML = `${word}<br><small>(${info.pronunciation})</small>`;
-                englishCol.appendChild(engItem);
-            });
-        }
-        function copyVocabulary() {
-            if (selectedWords.size === 0) {
-                alert('No hay palabras para copiar.');
-                return;
-            }
-            const sorted = Array.from(selectedWords.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-            let text = '';
-            sorted.forEach(([word, info]) => {
-                text += `${info.meaning} = ${word} (${info.pronunciation})\n`;
-            });
-            const ta = document.getElementById('copyTextarea');
-            ta.value = text;
-            ta.select();
-            ta.setSelectionRange(0, 99999);
-            try {
-                if (document.execCommand('copy')) {
-                    showNotification('¡Vocabulario copiado!');
-                    const btn = document.getElementById('copyBtn');
-                    btn.classList.add('copied');
-                    btn.textContent = '¡Copiado!';
-                    setTimeout(() => {
-                        btn.classList.remove('copied');
-                        btn.textContent = 'Copiar para Quizlet';
-                    }, 2000);
-                }
-            } catch (err) {
-                alert('No se pudo copiar automáticamente.');
-            }
-        }
-
-        // === RESTO DEL CÓDIGO (vocabulario, modo oscuro, popups, etc.) ===
+        // === FUNCIONES PARA GOOGLE SHEETS (VOCABULARIO) ===
         async function cargarDesdeGoogleSheets() {
             try {
                 const res = await fetch(GOOGLE_SHEETS_URL);
@@ -885,8 +817,7 @@
                 "wakes up": "despierta", "starts playing": "empieza a jugar",
                 "turns off": "apaga", "eats": "come", "sleeps": "duerme",
                 "get": "obtener", "fat": "gordo", "get fat": "engordar",
-                "getting": "obteniendo", "very": "muy", "stare": "mirar fijamente",
-                "stared": "miró fijamente", "quitting": "renunciar", "future": "futuro"
+                "getting": "obteniendo", "very": "muy"
             };
             for (const [word, meaning] of Object.entries(translations)) {
                 wordDatabase[word] = {
@@ -906,19 +837,12 @@
                 "wakes up": "uieks ap", "starts playing": "starts pleiin",
                 "turns off": "turns of", "eats": "its", "sleeps": "slips",
                 "get": "guet", "fat": "fat", "get fat": "guet fat",
-                "getting": "gueting", "very": "veri", "stare": "ster",
-                "stared": "sterd", "quitting": "kuitin", "future": "fiutcher"
+                "getting": "gueting", "very": "veri"
             };
             return prons[word] || word;
         }
-        function getTranslation(word) {
-            const clean = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
-            return wordDatabase[clean]?.meaning || `Traducción no encontrada para: ${clean}`;
-        }
-        function getPronunciation(word) {
-            const clean = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
-            return wordDatabase[clean]?.pronunciation || generateSpanishPronunciation(clean);
-        }
+
+        // === FUNCIONES DE PROCESAMIENTO DE TEXTO ===
         function createClickableSpan(word, parentGroup = null) {
             const span = document.createElement('span');
             span.textContent = word;
@@ -1013,6 +937,8 @@
                 else processTextForSentenceMode();
             }
         }
+
+        // === FUNCIONES DE DICCIONARIO Y POPUPS ===
         function handleWordClick(word, event) {
             speakWord(word);
             showWordPopup(word, event);
@@ -1069,6 +995,80 @@
             document.getElementById('wordPopup').style.display = 'none';
             document.getElementById('popupOverlay').style.display = 'none';
         }
+        function getTranslation(word) {
+            const clean = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
+            return wordDatabase[clean]?.meaning || `Traducción no encontrada para: ${clean}`;
+        }
+        function getPronunciation(word) {
+            const clean = word.toLowerCase().replace(/[.,!?;:'"]/g, '');
+            return wordDatabase[clean]?.pronunciation || generateSpanishPronunciation(clean);
+        }
+        function addCurrentWordToVocabulary() {
+            if (!currentWord) return;
+            const clean = currentWord.toLowerCase().replace(/[.,!?;:'"]/g, '');
+            if (clean.length < 2) return;
+            const info = wordDatabase[clean] || { meaning: getTranslation(clean), pronunciation: getPronunciation(clean) };
+            selectedWords.set(clean, info);
+            updateVocabularyDisplay();
+            const addBtn = document.getElementById('popupAddBtn');
+            addBtn.textContent = 'Ya agregada';
+            addBtn.classList.remove('popup-add-btn');
+            addBtn.classList.add('popup-added-btn');
+            addBtn.disabled = true;
+            showNotification(`${clean} agregada a la lista`);
+        }
+        function updateVocabularyDisplay() {
+            const spanishCol = document.getElementById('spanishColumn');
+            const englishCol = document.getElementById('englishColumn');
+            spanishCol.innerHTML = '';
+            englishCol.innerHTML = '';
+            if (selectedWords.size === 0) {
+                spanishCol.innerHTML = '<div class="empty-message">No hay palabras seleccionadas aún. Haz clic en palabras para agregarlas.</div>';
+                return;
+            }
+            const sorted = Array.from(selectedWords.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+            sorted.forEach(([word, info]) => {
+                const spanItem = document.createElement('div');
+                spanItem.className = 'vocabulary-item';
+                spanItem.textContent = info.meaning;
+                spanishCol.appendChild(spanItem);
+                const engItem = document.createElement('div');
+                engItem.className = 'vocabulary-item';
+                engItem.innerHTML = `${word}<br><small>(${info.pronunciation})</small>`;
+                englishCol.appendChild(engItem);
+            });
+        }
+        function copyVocabulary() {
+            if (selectedWords.size === 0) {
+                alert('No hay palabras para copiar.');
+                return;
+            }
+            const sorted = Array.from(selectedWords.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+            let text = '';
+            sorted.forEach(([word, info]) => {
+                text += `${info.meaning} = ${word} (${info.pronunciation})\n`;
+            });
+            const ta = document.getElementById('copyTextarea');
+            ta.value = text;
+            ta.select();
+            ta.setSelectionRange(0, 99999);
+            try {
+                if (document.execCommand('copy')) {
+                    showNotification('¡Vocabulario copiado!');
+                    const btn = document.getElementById('copyBtn');
+                    btn.classList.add('copied');
+                    btn.textContent = '¡Copiado!';
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.textContent = 'Copiar para Quizlet';
+                    }, 2000);
+                }
+            } catch (err) {
+                alert('No se pudo copiar automáticamente.');
+            }
+        }
+
+        // === MODO OSCURO ===
         function toggleDarkMode() {
             const container = document.getElementById('appContainer');
             const isDark = container.getAttribute('data-theme') === 'dark';
@@ -1080,6 +1080,8 @@
                 localStorage.setItem('theme', 'dark');
             }
         }
+
+        // === ADMINISTRACIÓN ===
         async function refreshStoriesFromSheets() {
             const btn = document.getElementById('refreshStoriesBtn');
             const spinner = btn.querySelector('.loading-spinner');
@@ -1098,12 +1100,16 @@
         function openGoogleSheets() {
             window.open(HISTORIAS_SHEETS_EDIT_URL, '_blank');
         }
+
+        // === NOTIFICACIONES ===
         function showNotification(message) {
             const n = document.getElementById('notification');
             n.textContent = message;
             n.style.display = 'block';
             setTimeout(() => n.style.display = 'none', 3000);
         }
+
+        // === INICIALIZACIÓN ===
         async function initApp() {
             await cargarDesdeGoogleSheets();
             await cargarHistoriasDesdeSheets();
